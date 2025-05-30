@@ -1,0 +1,46 @@
+.body1 h1{
+    color:blueviolet;
+    font-weight:bold;
+    font-size:55px;
+}
+.body1{
+    justify-content: center;
+    display: flex;
+    margin-top:40px;
+}
+.col img{
+    height:140px;
+    margin-top:20px;
+}
+.row{
+    margin-top:20px;
+    justify-content: center;
+}
+.col{
+    background-color:transparent;
+    margin-left:25px;
+    margin-right:25px;
+}
+.col h1{
+    font-size:27px;
+    font-weight:bold;
+    color:silver;
+    font-family:Georgia, 'Times New Roman', Times, serif;
+}
+.col p{
+    font-size:22px;
+    color:darkgrey;
+    padding-left:15px;
+    padding-right:15px;
+}
+#reason h2{
+    color:silver;
+    font-family:Georgia, 'Times New Roman', Times, serif;
+    font-weight:bold;
+    font-size:30px;
+    padding:11px;
+}
+#reason p{
+    font-size:26px;
+    color:darkgrey;
+}
