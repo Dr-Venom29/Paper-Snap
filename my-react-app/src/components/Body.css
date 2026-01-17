@@ -1,46 +1,104 @@
-.body1 h1{
-    color:blueviolet;
-    font-weight:bold;
-    font-size:55px;
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;500;700&display=swap');
+
+:root {
+  --bg-dark: #050505;
+  --card-bg: rgba(20, 20, 20, 0.8);
+  --accent: #8b5cf6; /* Neon Violet */
+  --text-main: #ffffff;
+  --text-sub: #94a3b8;
+  --border: rgba(255, 255, 255, 0.1);
 }
-.body1{
-    justify-content: center;
-    display: flex;
-    margin-top:40px;
+
+body {
+  background-color: var(--bg-dark);
+  color: var(--text-main);
+  font-family: 'Space Grotesk', sans-serif;
+  margin: 0;
+  background-image: radial-gradient(circle at 50% 0%, #1a1a1a 0%, #000 70%);
 }
-.col img{
-    height:140px;
-    margin-top:20px;
+
+.section-header {
+  text-align: center;
+  padding: 60px 20px 40px;
 }
-.row{
-    margin-top:20px;
-    justify-content: center;
+
+.section-header h1 {
+  font-size: 2.5rem;
+  margin: 0;
+  background: linear-gradient(to right, #fff, #94a3b8);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: 700;
 }
-.col{
-    background-color:transparent;
-    margin-left:25px;
-    margin-right:25px;
+
+/* Grid Layout - Mobile First */
+.grid-container {
+  display: grid;
+  gap: 20px;
+  max-width: 1200px;
+  margin: 0 auto 60px;
+  padding: 0 20px;
+  grid-template-columns: 1fr; /* 1 col on mobile */
 }
-.col h1{
-    font-size:27px;
-    font-weight:bold;
-    color:silver;
-    font-family:Georgia, 'Times New Roman', Times, serif;
+
+@media (min-width: 600px) {
+  .grid-container { grid-template-columns: repeat(2, 1fr); } /* 2 col on tablet */
 }
-.col p{
-    font-size:22px;
-    color:darkgrey;
-    padding-left:15px;
-    padding-right:15px;
+
+@media (min-width: 1024px) {
+  .grid-container { grid-template-columns: repeat(4, 1fr); } /* 4 col on desktop (4x4) */
 }
-#reason h2{
-    color:silver;
-    font-family:Georgia, 'Times New Roman', Times, serif;
-    font-weight:bold;
-    font-size:30px;
-    padding:11px;
+
+/* Card Styling */
+.card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  padding: 30px 20px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  height: 100%; /* Ensures equal height cards in a row */
+  transition: all 0.4s ease;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
 }
-#reason p{
-    font-size:26px;
-    color:darkgrey;
+
+.card:hover {
+  border-color: var(--accent);
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px rgba(139, 92, 246, 0.15);
+}
+
+/* Image Styling */
+.card img {
+  width: 80px;
+  height: 80px;
+  margin-bottom: 20px;
+  object-fit: contain;
+  filter: drop-shadow(0 0 10px rgba(255,255,255,0.1));
+  transition: transform 0.4s ease;
+}
+
+.card:hover img {
+  transform: scale(1.1);
+  filter: drop-shadow(0 0 15px var(--accent));
+}
+
+/* Typography */
+.card h1, .card h2 {
+  color: var(--text-main);
+  font-size: 1.25rem;
+  margin: 0 0 12px 0;
+  font-weight: 700;
+}
+
+.card p {
+  color: var(--text-sub);
+  font-size: 0.9rem;
+  line-height: 1.5;
+  margin: 0;
+  flex-grow: 1; /* Pushes content to distribute space evenly */
 }

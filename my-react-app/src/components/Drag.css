@@ -1,80 +1,129 @@
-.upload-container{
-    display:flex;
-    justify-content:center;
-    align-items:center;
-}
-.dropzone{
-    border:2px dashed rgb(134, 15, 134);
-    padding:30px;
-    border-radius:10px;
-    text-align:center;
-    width:730px;
-    height:345px;
-    cursor:pointer;
-    background-color:rgb(34, 35, 36);
-}
-.dropzone p{
-    color:silver;
-    font-size:26px;
-    padding:15px;
-}
-.dropzone:hover{
-    background-color:rgb(34, 35, 36);
-    border-color:rgb(134, 15, 134);
-}
-.dropzone:focus{
-    outline: none;
-}
-.pdf1{
-    height:75px;
-    margin-top:32px;
-} 
-.dropzone button{
-    border-radius:0.5rem;
-    align-items:center;
-    border:none;
-    background-color:#488aec;
-    font-size:18px;
-    padding: 0.75rem 1.5rem;
-    color:antiquewhite
-}
-/* From Uiverse.io by jeremyssocial */ 
-@keyframes blinkCursor {
-  50% {
-    border-right-color: transparent;
-  }
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;500;700&display=swap');
+
+:root {
+  --bg-dark: #050505;
+  --card-bg: rgba(20, 20, 20, 0.8);
+  --accent: #8b5cf6; /* Neon Violet */
+  --text-main: #ffffff;
+  --text-sub: #94a3b8;
+  --glass-border: rgba(255, 255, 255, 0.1);
 }
 
-@keyframes typeAndDelete {
-  0%,
-  10% {
-    width: 0;
-  }
-  45%,
-  55% {
-    width: 6.2em;
-  } /* adjust width based on content */
-  90%,
-  100% {
-    width: 0;
-  }
+body {
+  background-color: var(--bg-dark);
+  color: var(--text-main);
+  font-family: 'Space Grotesk', sans-serif;
+  margin: 0;
 }
 
-.terminal-loader {
-  border: 0.1em solid #333;
-  background-color: #1a1a1a;
-  color: #0f0;
-  font-family: "Courier New", Courier, monospace;
-  font-size: 1em;
-  padding: 1.5em 1em;
-  width: 12em;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  border-radius: 4px;
+/* Main Container */
+.upload-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 70vh; /* Takes up most of the screen height */
+  padding: 20px;
+  /* Subtle background gradient mesh */
+  background-image: radial-gradient(circle at 50% 50%, #1a1a1a 0%, #000 100%);
+}
+
+/* Glassmorphism Dropzone */
+.dropzone {
+  background: var(--card-bg);
+  border: 2px dashed var(--glass-border);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-radius: 24px;
+  padding: 60px 40px;
+  text-align: center;
+  width: 100%;
+  max-width: 700px; /* Responsive max width */
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   overflow: hidden;
-  box-sizing: border-box;
-  margin-left:236px;
-  margin-top:86px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Hover & Focus States */
+.dropzone:hover, .dropzone:focus-within {
+  border-color: var(--accent);
+  box-shadow: 0 0 30px rgba(139, 92, 246, 0.15);
+  background: rgba(30, 30, 30, 0.8);
+  transform: translateY(-2px);
+}
+
+/* Text Styles */
+.dropzone p {
+  color: var(--text-sub);
+  font-size: 1.2rem;
+  margin: 15px 0 30px 0;
+  font-weight: 300;
+}
+
+/* PDF Icon Animation */
+.pdf1 {
+  height: 90px;
+  margin-bottom: 10px;
+  filter: drop-shadow(0 0 15px rgba(255,255,255,0.05));
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+  100% { transform: translateY(0px); }
+}
+
+/* Button Styling */
+.cssbuttons-io-button {
+  align-items: center;
+  font-family: inherit;
+  font-weight: 600;
+  font-size: 16px;
+  padding: 0.8em 2em;
+  color: white;
+  background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(124, 58, 237, 0.4);
+  display: inline-flex;
+  gap: 10px;
+}
+
+.cssbuttons-io-button:hover {
+  box-shadow: 0 6px 20px rgba(139, 92, 246, 0.6);
+  transform: translateY(-2px);
+}
+
+.cssbuttons-io-button svg {
+  width: 20px;
+  height: 20px;
+  fill: white;
+}
+
+/* --- TERMINAL LOADER --- */
+.terminal-loader {
+  border: 1px solid #333;
+  background-color: #0a0a0a;
+  color: #00ff9d; /* Hacker Green */
+  font-family: "Courier New", Courier, monospace;
+  font-size: 14px;
+  width: 100%;
+  max-width: 300px;
+  height: 120px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  border-radius: 8px;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .terminal-header {
@@ -82,180 +131,46 @@
   top: 0;
   left: 0;
   right: 0;
-  height: 1.5em;
-  background-color: #333;
-  border-top-left-radius: 4px;
-  border-top-right-radius: 4px;
-  padding: 0 0.4em;
-  box-sizing: border-box;
+  height: 30px;
+  background-color: #1f1f1f;
+  border-bottom: 1px solid #333;
+  display: flex;
+  align-items: center;
+  padding: 0 10px;
 }
 
 .terminal-controls {
-  float: right;
+  display: flex;
+  gap: 6px;
 }
 
 .control {
-  display: inline-block;
-  width: 0.6em;
-  height: 0.6em;
-  margin-left: 0.4em;
+  width: 10px;
+  height: 10px;
   border-radius: 50%;
-  background-color: #777;
 }
 
-.control.close {
-  background-color: #e33;
-}
-
-.control.minimize {
-  background-color: #ee0;
-}
-
-.control.maximize {
-  background-color: #0b0;
-}
+.control.close { background-color: #ff5f56; }
+.control.minimize { background-color: #ffbd2e; }
+.control.maximize { background-color: #27c93f; }
 
 .terminal-title {
-  float: left;
-  line-height: 1.5em;
-  color: #eee;
+  margin-left: auto;
+  margin-right: auto;
+  color: #888;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
+/* Loading Text Animation */
 .text {
-  display: inline-block;
+  margin-top: 20px;
   white-space: nowrap;
-  overflow: hidden;
-  border-right: 0.2em solid green; /* Cursor */
-  animation:
-    typeAndDelete 4s steps(11) infinite,
-    blinkCursor 0.5s step-end infinite alternate;
-  margin-top: 1.5em;
-}
-/* Modal Overlay */
-.summary-overlay {
-  position: fixed;               /* Fixed to the screen */
-  top: 0;
-  left: 0;
-  width: 100vw;                  /* Full viewport width */
-  height: 100vh;                 /* Full viewport height */
-  background-color: rgba(0, 0, 0, 0.8); /* Darker background for overlay */
-  display: flex;
-  align-items: center;           /* Centers content vertically */
-  justify-content: center;       /* Centers content horizontally */
-  z-index: 2000;                 /* Ensures it appears above other content */
-  animation: fadeIn 0.4s ease-in-out; /* Smooth fade-in effect */
+  border-right: 2px solid #00ff9d;
+  animation: blinkCursor 0.75s step-end infinite;
 }
 
-/* Summary Box */
-.summary-box {
-  background: #2b2b2b;             /* Dark background for the box */
-  color: #f5f5f5;                  /* Light text color for contrast */
-  padding: 40px 30px;              /* Added padding for better spacing */
-  border-radius: 16px;             /* Rounded corners */
-  text-align: center;              /* Centers text inside */
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);  /* Soft shadow for depth */
-  max-width: 600px;                /* Max width for large screens */
-  width: 80%;                      /* Responsive width */
-  height: 400px;                   /* Fixed height for a rectangular shape */
-  display: flex;                   /* Flexbox to center content inside */
-  flex-direction: column;          /* Stacks content vertically */
-  justify-content: center;         /* Centers content vertically */
-  overflow-y: auto;                /* Enables scrolling if the content overflows */
-  animation: slideUp 0.4s ease-out; /* Smooth slide-up animation */
-  z-index: 2001;                   /* Ensures it's above the overlay */
+@keyframes blinkCursor {
+  50% { border-right-color: transparent; }
 }
-
-/* Animations */
-@keyframes fadeIn {
-  0% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 1;
-  }
-}
-
-@keyframes slideUp {
-  0% {
-    transform: translateY(40px);   /* Starts lower for a more dramatic effect */
-    opacity: 0;
-  }
-  100% {
-    transform: translateY(0);
-    opacity: 1;
-  }
-}
-
-/* Heading styles */
-.summary-box h3 {
-  margin-bottom: 20px;              /* Increased margin for spacing */
-  font-size: 1.6rem;                /* Larger font for heading */
-  font-weight: 600;                 /* Bold for emphasis */
-  color: #ffcc00;                   /* Yellowish color for the heading */
-  text-transform: uppercase;        /* Uppercase for better prominence */
-  letter-spacing: 2px;              /* Adds space between letters */
-}
-
-/* Paragraph styles */
-.summary-box p {
-  font-size: 1.1rem;                /* Slightly larger font for readability */
-  line-height: 1.6;                 /* Increased line height for better spacing */
-  color: #e0e0e0;                   /* Lighter gray for text */
-  word-wrap: break-word;            /* Avoid overflow for long words */
-  max-height: 90%;                  /* Limits max height for text before scrolling */
-  overflow-y: auto;                 /* Allows text to scroll if content overflows */
-  padding-right: 10px;              /* Padding for scroll space */
-}
-
-/* Custom Scrollbar */
-.summary-box::-webkit-scrollbar {
-  width: 12px;                       /* A bit wider for a more modern look */
-  background-color: #333;             /* Dark background for the scrollbar track */
-  border-radius: 6px;                 /* Rounded corners for the scrollbar */
-}
-
-/* Scrollbar Thumb */
-.summary-box::-webkit-scrollbar-thumb {
-  background: linear-gradient(135deg, #555, #333);  /* Subtle gradient for the thumb */
-  border-radius: 6px;                 /* Rounded corners for the thumb */
-  transition: background-color 0.3s ease;  /* Smooth transition effect for hover */
-}
-
-/* Scrollbar Thumb on Hover */
-.summary-box::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(135deg, #777, #555);  /* Lighter gradient on hover */
-}
-
-/* Scrollbar Track */
-.summary-box::-webkit-scrollbar-track {
-  background-color: #222;            /* Darker track color to match the background */
-  border-radius: 6px;                 /* Rounded corners for the track */
-}
-.cssbuttons-io-button {
-  align-items: center;
-  font-family: inherit;
-  font-weight: 500;
-  font-size: 17px;
-  padding: 0.8em 1.5em 0.8em 1.2em;
-  color: white;
-  background: #ad5389;
-  background: linear-gradient(0deg, rgb(120, 47, 255) 0%, rgb(185, 132, 255) 100%);
-  border: none;
-  letter-spacing: 0.05em;
-  border-radius:50px;
-}
-.cssbuttons-io-button svg {
-  margin-right: 8px;
-}
-.cssbuttons-io-button:hover {
-  box-shadow: 0 0.5em 1.5em -0.5em rgb(149, 91, 255);
-}
-.cssbuttons-io-button:active {
-  box-shadow: 0 0.3em 1em -0.5em rgb(160, 109, 255);
-}
-
-
-
-
-
-
