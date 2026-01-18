@@ -10,6 +10,18 @@
   position: relative;
   overflow-x: hidden;
   padding-bottom: 40px;
+  /* Re-enable text selection on the summary page */
+  -webkit-user-select: text;
+  -moz-user-select: text;
+  -ms-user-select: text;
+  user-select: text;
+}
+
+.summary-page * {
+  -webkit-user-select: text;
+  -moz-user-select: text;
+  -ms-user-select: text;
+  user-select: text;
 }
 
 /* Ambient Glow Orbs */

@@ -20,6 +20,8 @@ body {
 .section-header {
   text-align: center;
   padding: 60px 20px 40px;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
 .section-header h1 {
@@ -29,6 +31,7 @@ body {
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   font-weight: 700;
+  text-align: center;
 }
 
 /* Grid Layout - Mobile First */
@@ -39,6 +42,7 @@ body {
   margin: 0 auto 60px;
   padding: 0 20px;
   grid-template-columns: 1fr; /* 1 col on mobile */
+  justify-items: center; /* ensure cards are centered within columns */
 }
 
 @media (min-width: 600px) {
