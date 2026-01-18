@@ -1,8 +1,6 @@
 import React from 'react';
 import './Footer.css';
 import { Link } from 'react-router-dom';
-import privacy from './Paper-Snap-pp.pdf';
-import terms from './Terms-of-Service.pdf';
 import instagram from './insta.png';
 import x from './X.webp';
 import facebook from './fb.jpg';
@@ -38,12 +36,12 @@ export default function Footer() {
 
         {/* Bottom Section */}
         <div className="footer-bottom">
-          <p>© Paper Snap 2025. All rights reserved.</p>
+          <p>© Paper Snap 2026. All rights reserved.</p>
           
           <div className="footer-links">
-            <a href={privacy}>Privacy Policy</a>
-            <a href={terms}>Terms of Service</a>
-            <Link to="mailto:support@pdf-summarizer.com">Contact Us</Link>
+    <Link to="/privacy-policy">Privacy Policy</Link>
+      <Link to="/terms-of-service">Terms of Service</Link>
+      <Link to="mailto:support@pdf-summarizer.com">Contact Us</Link>
           </div>
 
           <p className="developer-credit">Developed by: Paper Snap Team</p>

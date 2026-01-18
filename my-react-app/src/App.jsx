@@ -9,6 +9,8 @@ import Signup from './pages/Signup';
 import Password from './pages/Password';
 import Footer from './components/Footer'
 import Summary from './pages/Summary'
+import PrivacyPolicy from './pages/PrivacyPolicy';
+import TermsOfService from './pages/TermsOfService';
 import "./App.css"
 
 function App() {
@@ -21,7 +23,7 @@ function App() {
 
 function Main() {
   const location = useLocation();  // Get the current route path
-  const showLayout = !['/login', '/signup', '/password', '/summary'].includes(location.pathname); //Determine if we should show the Navbar, Drag, and Body components
+  const showLayout = !['/login', '/signup', '/password', '/summary', '/privacy-policy', '/terms-of-service'].includes(location.pathname); //Determine if we should show the Navbar, Drag, and Body components
 
   return (
     <>
@@ -41,6 +43,8 @@ function Main() {
         <Route path="/signup" element={<Signup />}/>
         <Route path="/password" element={<Password />}/>
         <Route path="/summary" element={<Summary />}/>
+        <Route path="/privacy-policy" element={<PrivacyPolicy />}/>
+        <Route path="/terms-of-service" element={<TermsOfService />}/>
       </Routes>
     </>
   );
