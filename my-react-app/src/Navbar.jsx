@@ -153,7 +153,7 @@ const Navbar = () => {
               </div>
               <div className="form-actions">
                 <button type="submit" className="btn-submit">Submit</button>
-                <button type="button" className="btn-close" onClick={handleContactClick}>Close</button>
+                <button type="button" className="btn-cancel" onClick={handleContactClick}>Close</button>
               </div>
             </form>
           </div>
