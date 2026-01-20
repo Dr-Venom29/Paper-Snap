@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "@supabase/supabase-js": "^2.91.0",
     "@vitalets/google-translate-api": "^9.2.1",
     "cors": "^2.8.5",
     "docx": "^9.3.0",

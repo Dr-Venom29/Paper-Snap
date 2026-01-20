@@ -1,7 +1,12 @@
 import re
 import requests
 import random
+from dotenv import load_dotenv
+import os
 from sympy import sympify, simplify
+
+load_dotenv()
+
 from sympy.core.sympify import SympifyError
 from transformers import pipeline
 from duckduckgo_search.duckduckgo_search import DDGS
@@ -16,7 +21,12 @@ from common_utils import (
 from better_profanity import profanity
 profanity.load_censor_words()
 
-WOLFRAM_APP_ID = "6H5AHJ-KPUA2XT78K"
+import os
+
+# ... imports ...
+
+WOLFRAM_APP_ID = os.getenv("WOLFRAM_APP_ID", "6H5AHJ-KPUA2XT78K")
+
 
 def setup_docsearch(file_path: str):
     docs = load_and_clean_pdf(file_path)

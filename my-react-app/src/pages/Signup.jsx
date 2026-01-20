@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import { supabase } from '../supabase/SupabaseClient';
 import './Login.css'; // You can use the same CSS file as Login.css
 import { Link, useNavigate } from 'react-router-dom';
 
@@ -17,14 +17,16 @@ const Signup = () => {
     setMessage({ text: '', type: '' });
 
     try {
-      const res = await axios.post('http://localhost:5000/api/auth/signup', { 
-        email, 
-        password 
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
       });
+
+      if (error) throw error;
 
       // Show success message
       setMessage({ text: "Account created successfully!", type: 'success' });
-      console.log(res.data);
+      console.log(data);
 
       // Redirect after short delay
       setTimeout(() => {
@@ -33,7 +35,7 @@ const Signup = () => {
 
     } catch (err) {
       console.error('Signup error:', err);
-      const errorMsg = err.response?.data?.message || "Something went wrong.";
+      const errorMsg = err.message || "Something went wrong.";
       setMessage({ text: errorMsg, type: 'error' });
       setLoading(false);
     }

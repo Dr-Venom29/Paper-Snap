@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import { supabase } from '../supabase/SupabaseClient';
 import './Login.css';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 
@@ -21,16 +21,18 @@ const Login = () => {
     setMessage({ text: '', type: '' });
 
     try {
-      const res = await axios.post("http://localhost:5000/api/auth/login", {
+      const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
+
+      if (error) throw error;
 
       // Show success message
       setMessage({ text: "Welcome back! Redirecting...", type: 'success' });
       
       // Save token
-      localStorage.setItem("token", res.data.token);
+      localStorage.setItem("token", data.session.access_token);
 
       // Delay slightly to show the success message
       setTimeout(() => {
@@ -41,7 +43,7 @@ const Login = () => {
       }, 1000);
 
     } catch (err) {
-      const errorMsg = err.response?.data?.message || "Connection failed. Please try again.";
+      const errorMsg = err.message || "Connection failed. Please try again.";
       setMessage({ text: errorMsg, type: 'error' });
       setLoading(false);
     }

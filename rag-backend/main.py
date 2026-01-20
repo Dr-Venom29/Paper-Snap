@@ -4,6 +4,10 @@ import os
 import re
 import uuid
 from werkzeug.utils import secure_filename
+from dotenv import load_dotenv
+
+load_dotenv()
+
 from rag_pipeline import run_rag_pipeline
 from chatbot import setup_docsearch, llm, HybridChatbot
 DOCSEARCH_CACHE = {}
@@ -13,7 +17,7 @@ app.config['SESSION_COOKIE_SAMESITE'] = "Lax"
 app.config['SESSION_COOKIE_SECURE'] = True
 CORS(app, supports_credentials=True)
 
-app.secret_key = "your_secret_key_here"  # change this to a secure secret
+app.secret_key = os.getenv("FLASK_SECRET_KEY", "your_secret_key_here")
 
 # Ensure upload folder exists
 UPLOAD_FOLDER = os.path.join(os.path.dirname(__file__), 'uploads')

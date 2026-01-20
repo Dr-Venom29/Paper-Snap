@@ -3,6 +3,7 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import logo from './web-logo.png';
 import profile from './profile.png';
 import './Navbar.css';
+import { supabase } from './supabase/SupabaseClient';
 
 const Navbar = () => {
   const navigate = useNavigate();
@@ -26,7 +27,8 @@ const Navbar = () => {
     setShowLogoutModal(true);
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
     localStorage.removeItem('token');
     setShowLogoutModal(false);
     navigate('/');
@@ -40,22 +42,22 @@ const Navbar = () => {
   const handleFormSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch('http://localhost:5000/api/contact', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
-      });
+      const { error } = await supabase.from('contact_messages').insert([{
+        querytype: formData.queryType,
+        email: formData.email,
+        message: formData.message
+      }]);
   
-      if (response.ok) {
+      if (!error) {
         alert('Message sent successfully!');
         setFormData({ queryType: '', email: '', message: '' });
         setShowForm(false);
       } else {
-        alert('Error sending message');
+        alert('Error sending message: ' + error.message);
       }
     } catch (error) {
       console.error(error);
-      alert('Something went wrong!');
+      alert('Something went wrong! ' + (error.message || error.toString()));
     }
   };
 

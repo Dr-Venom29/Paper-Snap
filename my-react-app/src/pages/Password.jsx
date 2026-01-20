@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import { supabase } from '../supabase/SupabaseClient';
 import './Login.css'; // You can use the same CSS file as Login.css
 import { Link } from 'react-router-dom';
 
@@ -14,15 +14,15 @@ const Password = () => {
     setMessage({ text: '', type: '' });
 
     try {
-      const res = await axios.post('http://localhost:5000/api/auth/password', { 
-        email 
-      });
+      const { error } = await supabase.auth.resetPasswordForEmail(email);
+
+      if (error) throw error;
 
       // Show success message from backend or generic
-      setMessage({ text: res.data.message || "Reset link sent successfully!", type: 'success' });
+      setMessage({ text: "Reset link sent successfully!", type: 'success' });
       setEmail(''); // Clear input on success
     } catch (err) {
-      const errorMsg = err.response?.data?.message || 'Failed to send reset link. Please try again.';
+      const errorMsg = err.message || 'Failed to send reset link. Please try again.';
       setMessage({ text: errorMsg, type: 'error' });
     } finally {
       setLoading(false);
