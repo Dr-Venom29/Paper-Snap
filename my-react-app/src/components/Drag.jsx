@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import './Drag.css';
-import pdf from './upload.png';
+import pdfIcon from './upload.png'; // Renamed to avoid confusion with PDF type
 import { useNavigate } from 'react-router-dom';
 
 export default function Drag() {
@@ -12,45 +12,47 @@ export default function Drag() {
     formData.append('file', file);
 
     try {
+      // Ensure backend is running on port 8000
       const response = await fetch('http://localhost:8000/upload', {
         method: 'POST',
         body: formData,
-        credentials: "include",
+        // Removed credentials if not using specific session cookies to simplify
       });
 
       const data = await response.json();
-      if (data.summary) {
+
+      if (response.ok && data.summary) {
+        // Successful navigation to Summary page
         navigate('/summary', { state: { summary: data.summary } });
       } else {
-        alert("❌ Failed to summarize document.");
+        const errorMsg = data.error || "Failed to summarize document.";
+        alert(`❌ ${errorMsg}`);
       }
     } catch (error) {
-      console.error('Error uploading file:', error);
-      alert("❌ An error occurred while uploading.");
+      console.error('Network Error:', error);
+      alert("❌ Server is offline. Please run main.py first.");
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleFileChange = (event) => {
-    const selectedFile = event.target.files[0];
-    if (selectedFile) {
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
       setIsLoading(true);
-      sendFileToBackend(selectedFile);
+      sendFileToBackend(file);
     }
   };
 
-  const handleDrop = (event) => {
-    event.preventDefault();
-    const droppedFile = event.dataTransfer.files[0];
-    if (droppedFile) {
+  const handleDrop = (e) => {
+    e.preventDefault();
+    const file = e.dataTransfer.files[0];
+    if (file && file.type === "application/pdf") {
       setIsLoading(true);
-      sendFileToBackend(droppedFile);
+      sendFileToBackend(file);
+    } else {
+      alert("Please drop a valid PDF file.");
     }
-  };
-
-  const handleDragOver = (event) => {
-    event.preventDefault();
   };
 
   return (
@@ -58,7 +60,7 @@ export default function Drag() {
       <div 
         className="dropzone" 
         onDrop={handleDrop} 
-        onDragOver={handleDragOver}
+        onDragOver={(e) => e.preventDefault()}
       >
         {isLoading ? (
           <div className="terminal-loader">
@@ -70,13 +72,12 @@ export default function Drag() {
               </div>
               <div className="terminal-title">Processing</div>
             </div>
-            <div className="text">Analyzing PDF...</div>
+            <div className="text">Analyzing Paper...</div>
           </div>
         ) : (
           <>
-            <img className="pdf1" src={pdf} alt="PDF Upload Icon" />
+            <img className="pdf1" src={pdfIcon} alt="Upload" />
             <p>Drag & drop your research paper here, or click to browse.</p>
-
             <input
               type="file"
               accept=".pdf"
@@ -84,14 +85,10 @@ export default function Drag() {
               style={{ display: 'none' }}
               onChange={handleFileChange}
             />
-
             <button 
               className="cssbuttons-io-button" 
               onClick={() => document.getElementById('fileInput').click()}
             >
-              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M7 10V9C7 6.23858 9.23858 4 12 4C14.7614 4 17 6.23858 17 9V10C19.2091 10 21 11.7909 21 14V18C21 20.2091 19.2091 22 17 22H7C4.79086 22 3 20.2091 3 18V14C3 11.7909 4.79086 10 7 10ZM12 6C10.3431 6 9 7.34315 9 9V10H15V9C15 7.34315 13.6569 6 12 6Z" fill="white"/>
-              </svg>
               <span>Select PDF</span>
             </button>
           </>

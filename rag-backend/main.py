@@ -1,78 +1,84 @@
-from flask import Flask, request, jsonify, session
+from flask import Flask, request, jsonify
 from flask_cors import CORS
-import os
-import re
-import uuid
-from werkzeug.utils import secure_filename
+from ingestion import process_pdf
+from storage import sync_to_supabase
+from generation import get_rag_chain
+from langchain_groq import ChatGroq
 from dotenv import load_dotenv
+import os
 
 load_dotenv()
-
-from rag_pipeline import run_rag_pipeline
-from chatbot import setup_docsearch, llm, HybridChatbot
-DOCSEARCH_CACHE = {}
-
 app = Flask(__name__)
-app.config['SESSION_COOKIE_SAMESITE'] = "Lax"
-app.config['SESSION_COOKIE_SECURE'] = True
-CORS(app, supports_credentials=True)
 
-app.secret_key = os.getenv("FLASK_SECRET_KEY", "your_secret_key_here")
+CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}}, supports_credentials=True)
 
-# Ensure upload folder exists
-UPLOAD_FOLDER = os.path.join(os.path.dirname(__file__), 'uploads')
-os.makedirs(UPLOAD_FOLDER, exist_ok=True)
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+vector_store = None
 
 @app.route('/upload', methods=['POST'])
-def upload_file():
-    print("📥 Upload endpoint hit")
-
+def upload():
+    global vector_store
+    
     if 'file' not in request.files:
-        print("❌ No file part in request.")
-        return jsonify({'summary': '❌ No file provided.'}), 400
-
+        return jsonify({"error": "No file part"}), 400
+        
     file = request.files['file']
     if file.filename == '':
-        print("❌ File name is empty.")
-        return jsonify({'summary': '❌ No file selected.'}), 400
+        return jsonify({"error": "No selected file"}), 400
 
-    filename = f"{uuid.uuid4().hex}_{secure_filename(file.filename)}"
-    file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-    print(f"💾 Saving file to: {file_path}")
+    os.makedirs("./uploads", exist_ok=True)
+    file_path = f"./uploads/{file.filename}"
     file.save(file_path)
-
-    # Store the uploaded file path in session for later use by chatbot
-    session['uploaded_file_path'] = file_path
-
+    
     try:
-        summary = run_rag_pipeline(file_path)
-        print("✅ Summary generated successfully.")
-        return jsonify({'summary': summary})
+        # 1. AI-Powered Ingestion
+        chunks = process_pdf(file_path)
+        
+        # FIX: Check if chunks is empty before proceeding
+        if not chunks:
+            return jsonify({
+                "error": "The PDF was processed but no text sections were found. Please try a different paper."
+            }), 422
+        
+        # 2. Cloud Vector Storage
+        vector_store = sync_to_supabase(chunks)
+        
+        # 3. Quick Summary Generation
+        # FIX: Added a check for the length of chunks to prevent list index out of range
+        llm = ChatGroq(model="llama-3.3-70b-versatile", temperature=0)
+        
+        # Safely slice the list even if it has fewer than 3 chunks
+        sample_chunks = chunks[:min(len(chunks), 3)]
+        combined_text = " ".join([c.page_content for c in sample_chunks])
+        
+        summary_prompt = f"Provide a concise professional summary of this document: {combined_text[:3000]}"
+        summary_result = llm.invoke(summary_prompt)
+        
+        return jsonify({
+            "status": "Success", 
+            "summary": summary_result.content
+        })
+        
     except Exception as e:
-        print("❌ Error during summarization:", str(e))
-        return jsonify({'summary': f"❌ Failed to summarize: {str(e)}"}), 500
+        print(f"Error during upload/processing: {e}")
+        return jsonify({"error": f"Internal processing error: {str(e)}"}), 500
 
-@app.route("/chat", methods=["POST"])
+@app.route('/chat', methods=['POST'])
 def chat():
+    global vector_store
+    if vector_store is None:
+        return jsonify({"error": "No document uploaded yet"}), 400
+
     data = request.get_json()
-    if not data or "message" not in data:
+    if not data or 'message' not in data:
         return jsonify({"error": "No message provided"}), 400
+    
+    try:
+        chain = get_rag_chain(vector_store)
+        response = chain.invoke(data['message'])
+        return jsonify({"response": response})
+    except Exception as e:
+        print(f"Error during chat: {e}")
+        return jsonify({"error": str(e)}), 500
 
-    file_path = session.get('uploaded_file_path')
-    if not file_path:
-        return jsonify({"error": "No file uploaded yet"}), 400
-
-    # Cache docsearch per uploaded file
-    if file_path not in DOCSEARCH_CACHE:
-        DOCSEARCH_CACHE[file_path] = setup_docsearch(file_path)
-    docsearch = DOCSEARCH_CACHE[file_path]
-
-    chatbot = HybridChatbot(docsearch, llm)
-    response = chatbot.get_answer(data["message"])
-    img_url_match = re.search(r"(https?://\S+\.(jpg|jpeg|png|gif))", response)
-    img_url = img_url_match.group(1) if img_url_match else None
-    return jsonify({"response": response, "image_url": img_url})
-
-if __name__ == '__main__':
-    app.run(port=8000)
+if __name__ == "__main__":
+    app.run(port=8000, debug=True)

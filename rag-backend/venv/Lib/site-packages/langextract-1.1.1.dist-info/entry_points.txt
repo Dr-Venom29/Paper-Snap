@@ -1,0 +1,4 @@
+[langextract.providers]
+gemini = langextract.providers.gemini:GeminiLanguageModel
+ollama = langextract.providers.ollama:OllamaLanguageModel
+openai = langextract.providers.openai:OpenAILanguageModel
