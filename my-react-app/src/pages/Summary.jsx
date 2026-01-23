@@ -70,13 +70,14 @@ const Summary = () => {
     setShowModal(true);
   };
 
-  const handleTranslateClick = () => {
+  const handleTranslateClick = (e) => {
+    e.stopPropagation(); // Prevent immediate closing due to document click listener
     if (!token) {
       alert('Please log in to translate the summary.');
       navigate('/login', { state: { from: '/summary', summary: originalSummary } });
       return;
     }
-    setShowTranslateDropdown(!showTranslateDropdown);
+    setShowTranslateDropdown((prev) => !prev);
   };
 
   const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
@@ -86,7 +87,7 @@ const Summary = () => {
     try {
       setLoadingTranslate(true);
       await delay(1000); // Fake delay
-      const res = await axios.post('http://localhost:5001/translate', {
+      const res = await axios.post('http://localhost:8000/translate', {
         text: originalSummary,
         targetLang: targetLang
       });
@@ -176,7 +177,7 @@ const Summary = () => {
               {showTranslateDropdown && (
                 <div className="dropdown-menu">
                   {['Telugu', 'Hindi', 'Sanskrit', 'Kannada', 'Malayalam', 'Tamil', 'French', 'Spanish', 'Russian', 'English'].map((lang) => (
-                    <button key={lang} onClick={() => handleLanguageSelect(lang.toLowerCase().substring(0,2))}>
+                    <button key={lang} onClick={() => handleLanguageSelect(lang)}>
                       {lang}
                     </button>
                   ))}

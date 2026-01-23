@@ -80,5 +80,25 @@ def chat():
         print(f"Error during chat: {e}")
         return jsonify({"error": str(e)}), 500
 
+@app.route('/translate', methods=['POST'])
+def translate():
+    data = request.get_json()
+    if not data or 'text' not in data or 'targetLang' not in data:
+        return jsonify({"error": "Missing text or targetLang"}), 400
+    
+    text = data['text']
+    target_lang = data['targetLang']
+    
+    try:
+        llm = ChatGroq(model="llama-3.3-70b-versatile", temperature=0)
+        
+        prompt = f"Translate the following text to {target_lang}. details only return the translated text without any other text/explanation:\n\n{text}"
+        response = llm.invoke(prompt)
+        
+        return jsonify({"translatedText": response.content})
+    except Exception as e:
+        print(f"Error during translation: {e}")
+        return jsonify({"error": str(e)}), 500
+
 if __name__ == "__main__":
     app.run(port=8000, debug=True)
