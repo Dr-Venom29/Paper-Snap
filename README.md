@@ -125,6 +125,7 @@ npm start
     </td>
     <td align="center">
       <a href="https://github.com/vislavathmahesh">
+        <img src="https://github.com/vislavathmahesh.png" width="100px;" alt=""/>
         <br />
         <sub><b>vislavathmahesh</b></sub>
       </a>
