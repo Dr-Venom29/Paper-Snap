@@ -56,6 +56,14 @@ def upload():
     except Exception as e:
         print(f"Error during upload/processing: {e}")
         return jsonify({"error": f"Internal processing error: {str(e)}"}), 500
+    finally:
+        # Cleanup: Always remove the temporary file to prevent disk fill-up
+        if os.path.exists(file_path):
+            try:
+                os.remove(file_path)
+                print(f"🧹 Server Hygiene: Deleted temporary file {file_path}")
+            except Exception as cleanup_error:
+                print(f"⚠️ Warning: Failed to delete {file_path}: {cleanup_error}")
 
 @app.route('/chat', methods=['POST'])
 def chat():
