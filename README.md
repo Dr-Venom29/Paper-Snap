@@ -107,8 +107,6 @@ npm start
 
 ##  Contributors
 
-A big shoutout to the amazing team that made this possible:
-
 <table>
   <tr>
     <td align="center">
@@ -127,7 +125,6 @@ A big shoutout to the amazing team that made this possible:
     </td>
     <td align="center">
       <a href="https://github.com/vislavathmahesh">
-        <img src="https://github.com/vislavathmahesh.png" width="100px;" alt=""/>
         <br />
         <sub><b>vislavathmahesh</b></sub>
       </a>
