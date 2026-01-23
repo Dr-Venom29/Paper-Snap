@@ -67,5 +67,24 @@ def process_pdf(file_path):
         except Exception as e:
             print(f"Extraction error on page: {e}")
             continue
-            
+    
+    # --- FALLBACK MECHANISM ---
+    # If AI extraction failed to find structured sections, fall back to standard text chunking.
+    if not processed_chunks:
+        print("⚠️ Smart Extraction yielded zero results. Switching to Standard Fallback (RecursiveCharacterTextSplitter).")
+        # Correct import path for newer LangChain versions
+        from langchain_text_splitters import RecursiveCharacterTextSplitter
+        
+        text_splitter = RecursiveCharacterTextSplitter(
+            chunk_size=1000,
+            chunk_overlap=200
+        )
+        processed_chunks = text_splitter.split_documents(raw_docs)
+        
+        # Add metadata so usage downstream remains consistent
+        for doc in processed_chunks:
+            if "source" not in doc.metadata:
+                doc.metadata["source"] = file_path
+            doc.metadata["class"] = "General Content"
+
     return processed_chunks

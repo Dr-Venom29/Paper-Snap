@@ -2,7 +2,7 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 from ingestion import process_pdf
 from storage import sync_to_supabase, get_vector_store
-from generation import get_rag_chain
+from generation import get_rag_chain, generate_summary
 from langchain_groq import ChatGroq
 from dotenv import load_dotenv
 import os
@@ -44,20 +44,12 @@ def upload():
         # 2. Cloud Vector Storage with Session Isolation
         sync_to_supabase(chunks, file_id)
         
-        # 3. Quick Summary Generation
-        # FIX: Added a check for the length of chunks to prevent list index out of range
-        llm = ChatGroq(model="llama-3.3-70b-versatile", temperature=0)
-        
-        # Safely slice the list even if it has fewer than 3 chunks
-        sample_chunks = chunks[:min(len(chunks), 3)]
-        combined_text = " ".join([c.page_content for c in sample_chunks])
-        
-        summary_prompt = f"Provide a concise professional summary of this document: {combined_text[:3000]}"
-        summary_result = llm.invoke(summary_prompt)
+        # 3. High-Fidelity Summary Generation (No More Tunnel Vision)
+        summary_text = generate_summary(chunks)
         
         return jsonify({
             "status": "Success", 
-            "summary": summary_result.content,
+            "summary": summary_text,
             "file_id": file_id
         })
         
