@@ -6,11 +6,38 @@ from langchain_community.vectorstores import SupabaseVectorStore
 
 load_dotenv(find_dotenv())
 
-def sync_to_supabase(documents):
+
+def get_vector_store():
+    embeddings = CohereEmbeddings(
+        model="embed-english-v3.0",
+        cohere_api_key=os.getenv("COHERE_API_KEY")
+    )
+    
+    url = os.getenv("SUPABASE_URL")
+    key = os.getenv("SUPABASE_SERVICE_ROLE_KEY")
+    
+    if not url or not key:
+        raise ValueError("SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY is missing from .env")
+
+    supabase_client = create_client(url, key)
+    
+    return SupabaseVectorStore(
+        client=supabase_client,
+        embedding=embeddings,
+        table_name="documents",
+        query_name="match_documents"
+    )
+
+def sync_to_supabase(documents, file_id=None):
     # FIX: Return early if there are no documents to sync
     if not documents:
         print("Error: No documents provided for Supabase sync.")
         return None
+
+    # Add file_id to metadata for session isolation
+    if file_id:
+        for doc in documents:
+            doc.metadata['file_id'] = file_id
 
     embeddings = CohereEmbeddings(
         model="embed-english-v3.0",

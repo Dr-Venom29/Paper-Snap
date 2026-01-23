@@ -1,22 +1,21 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from ingestion import process_pdf
-from storage import sync_to_supabase
+from storage import sync_to_supabase, get_vector_store
 from generation import get_rag_chain
 from langchain_groq import ChatGroq
 from dotenv import load_dotenv
 import os
+import uuid
 
 load_dotenv()
 app = Flask(__name__)
 
 CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}}, supports_credentials=True)
 
-vector_store = None
-
 @app.route('/upload', methods=['POST'])
 def upload():
-    global vector_store
+    # Remove global vector_store usage
     
     if 'file' not in request.files:
         return jsonify({"error": "No file part"}), 400
@@ -30,6 +29,9 @@ def upload():
     file.save(file_path)
     
     try:
+        # Generate unique file_id
+        file_id = str(uuid.uuid4())
+
         # 1. AI-Powered Ingestion
         chunks = process_pdf(file_path)
         
@@ -39,8 +41,8 @@ def upload():
                 "error": "The PDF was processed but no text sections were found. Please try a different paper."
             }), 422
         
-        # 2. Cloud Vector Storage
-        vector_store = sync_to_supabase(chunks)
+        # 2. Cloud Vector Storage with Session Isolation
+        sync_to_supabase(chunks, file_id)
         
         # 3. Quick Summary Generation
         # FIX: Added a check for the length of chunks to prevent list index out of range
@@ -55,7 +57,8 @@ def upload():
         
         return jsonify({
             "status": "Success", 
-            "summary": summary_result.content
+            "summary": summary_result.content,
+            "file_id": file_id
         })
         
     except Exception as e:
@@ -64,16 +67,17 @@ def upload():
 
 @app.route('/chat', methods=['POST'])
 def chat():
-    global vector_store
-    if vector_store is None:
-        return jsonify({"error": "No document uploaded yet"}), 400
-
     data = request.get_json()
     if not data or 'message' not in data:
         return jsonify({"error": "No message provided"}), 400
     
+    file_id = data.get('file_id')
+    if not file_id:
+        return jsonify({"error": "No file_id provided"}), 400
+
     try:
-        chain = get_rag_chain(vector_store)
+        vector_store = get_vector_store()
+        chain = get_rag_chain(vector_store, file_id)
         response = chain.invoke(data['message'])
         return jsonify({"response": response})
     except Exception as e:

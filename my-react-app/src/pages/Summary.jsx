@@ -12,6 +12,7 @@ const Summary = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const originalSummary = location.state?.summary || "No summary available.";
+  const file_id = location.state?.file_id;
 
   const [translatedSummary, setTranslatedSummary] = useState('');
   const [showTranslateDropdown, setShowTranslateDropdown] = useState(false);
@@ -106,7 +107,7 @@ const Summary = () => {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
-        body: JSON.stringify({ message }),
+        body: JSON.stringify({ message, file_id }),
       });
       if (!response.ok) throw new Error("Failed to fetch chatbot response");
       return await response.json();

@@ -23,7 +23,7 @@ export default function Drag() {
 
       if (response.ok && data.summary) {
         // Successful navigation to Summary page
-        navigate('/summary', { state: { summary: data.summary } });
+        navigate('/summary', { state: { summary: data.summary, file_id: data.file_id } });
       } else {
         const errorMsg = data.error || "Failed to summarize document.";
         alert(`❌ ${errorMsg}`);
